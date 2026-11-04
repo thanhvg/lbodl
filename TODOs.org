@@ -1,0 +1,38 @@
+:PROPERTIES:
+:CATEGORY: books
+:END:
+
+**** prompt
+You are working in a project containing a source PDF and possibly a partially converted Emacs Org-mode document with extracted image assets. Your task is to complete or improve the conversion of the PDF into a readable, navigable, accurate Org document.
+
+## Goal
+Produce a faithful Org-mode version of the book, preserving its structure, prose, mathematics, figures, captions, and end matter. Treat the PDF as the source of truth. Keep the PDF unchanged.
+
+## First inspect the project
+- Inspect the existing Org file, asset directory, and any project conversion plan before editing.
+- Follow the existing document structure, naming conventions, math notation, image-link style, and plan workflow.
+- Identify what is already converted and what remains; do not overwrite good existing work or duplicate content.
+- If a plan exists, follow it in order and keep its status current as required by the project instructions.
+
+## Conversion requirements
+- Preserve the book’s front matter, chapter and subsection hierarchy, navigation/contents, prose, equations, symbols, subscripts, superscripts, annotations, citations, captions, and end matter.
+- Use Org headings and LaTeX-compatible math consistent with the existing document. Check ambiguous or math-heavy material against the rendered PDF, not just text extraction.
+- Keep useful source-page references where they aid traceability.
+- Do not silently summarize or omit source content. If exact transcription is impractical, clearly identify the limitation rather than presenting a summary as a complete conversion.
+
+## Figures and adjacent text
+- Each linked figure asset must contain the figure itself and, where appropriate, its caption—not unrelated surrounding paragraphs, headers, or page text.
+- Transcribe meaningful prose adjacent to or below a figure into the correct place in the Org document, preserving its context and reading order. Do not lose text when cropping an image.
+- Crop carefully from the PDF-rendered page. Inspect the crop to ensure the complete diagram, labels, legend, and caption are retained and neighboring prose is excluded.
+- Render vector figures at sufficiently high resolution for comfortable reading (normally 300 DPI or higher when appropriate). Do not merely upscale low-resolution images; check the source’s native quality for raster figures.
+- Keep existing relative asset paths and Org links when suitable. Verify every link resolves to a present asset.
+- Leave bibliography and index page images unchanged if they are intentionally retained as scans; do not transcribe or recrop them unless explicitly requested.
+
+## Validation
+- Compare the resulting document against the PDF across the full page range, with extra attention to equations, figure-dependent explanations, and extraction artifacts.
+- Check that headings and contents match, paragraphs are in the correct order, and there is no duplicated or missing text.
+- Inspect every figure asset being changed; verify figure/caption pairing, clean boundaries, and readable resolution.
+- Check that all Org image links resolve, math environments are balanced, and the PDF remains unchanged.
+- Report what was changed, what was checked, and any remaining limitations. Do not claim complete validation if only a sample was reviewed.
+
+Work incrementally and preserve existing correct content. Before editing, briefly state the next concrete scope of work; after validation, report the files changed and evidence gathered.
