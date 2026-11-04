@@ -344,6 +344,8 @@ Convolutions apply the same local affine operator throughout a signal, leveragin
 #+CAPTION: Figure 4.2. 2D convolution and transposed convolution over local spatial patches. (PDF p. 66.)
 [[file:lbdl-assets/page-066.png]]
 
+For large tensors, fully connected transformations are impractical: parameter and operation counts scale with the product of input and output dimensions. Mapping a $256\times256$ RGB image to an output of the same size would require about $4\times10^{10}$ parameters and multiplications. High-dimensional signals are also strongly structured, so local convolutions exploit that structure instead of treating every input-output pair independently. (PDF p. 66.)
+
 Convolutions have hyperparameters padding $p$, stride $s$, and dilation $d$. Without padding or dilation, a 1D input of length $T$ and kernel $K$ with stride $S$ yields $T'=(T-K)/S+1$. The *receptive field* is the portion of the input that modulates an activation; a feature map is the spatial slice for one channel. Convolutions combine information and often reduce spatial size while increasing channels. Transposed convolutions sum shifted local affine results, increasing signal size and serving as a synthesis-like operation.
 
 #+CAPTION: Figure 4.3. Convolution padding, stride, and dilation. (PDF p. 67.)
@@ -358,6 +360,8 @@ Compositions of linear operators remain linear, so networks require nonlinear ac
 #+CAPTION: Figure 4.5. Tanh, ReLU, leaky ReLU, and GELU activation functions. (PDF p. 74.)
 [[file:lbdl-assets/page-074.png]]
 
+Before ReLU became common, the hyperbolic tangent was a standard activation; it saturates exponentially on both sides and can worsen vanishing gradients. Leaky ReLU retains a small positive slope for negative inputs, while GELU provides a smooth ReLU-like alternative. (PDF p. 74.)
+
 **** 4.4 Pooling
 Pooling combines activations to summarize information and reduce signal size. Max pooling takes the maximum per channel over non-overlapping spatial windows; its default stride equals the kernel size. Padding, stride, and dilation follow convolution conventions. Max pooling can be viewed as a logical disjunction over local feature-presence scores and loses precise location. Average pooling computes the window mean and is linear.
 
@@ -369,6 +373,8 @@ Dropout [Srivastava et al., 2014] has no trainable parameters and uses hyperpara
 
 #+CAPTION: Figure 4.7. Standard dropout randomly removes individual activations during training. (PDF p. 80.)
 [[file:lbdl-assets/page-080.png]]
+
+For 2D signals, short-range correlation makes elementwise dropout less effective because a zeroed activation can be inferred from its neighbors; channel-wise dropout therefore zeros whole channels. Although dropout is usually inactive at inference, repeated stochastic passes can be used to estimate confidence scores. (PDF p. 80.)
 
 #+CAPTION: Figure 4.8. For correlated 2D signals, dropout removes whole channels. (PDF p. 81.)
 [[file:lbdl-assets/page-081.png]]
@@ -423,6 +429,8 @@ Self-attention uses the same input sequence for queries, keys, and values; cross
 #+CAPTION: Figure 4.11. Attention matches queries to keys and averages corresponding values. (PDF p. 91.)
 [[file:lbdl-assets/page-091.png]]
 
+For each query, attention first compares it with all keys to obtain normalized scores, then averages the corresponding values using those scores. In general, $Q$ has shape $N^Q\times D^{QK}$, while $K$ and $V$ have shapes $N^{KV}\times D^{QK}$ and $N^{KV}\times D^V$; the result has shape $N^Q\times D^V$. (PDF p. 91.)
+
 #+CAPTION: Figure 4.12. Scaled attention with optional masking and dropout. (PDF p. 93.)
 [[file:lbdl-assets/page-093.png]]
 
@@ -451,6 +459,8 @@ A Multi-Layer Perceptron (MLP) is a succession of fully connected layers separat
 #+CAPTION: Figure 5.1. An MLP with three fully connected layers, dimensions 25, 10, and 2, and ReLU activations between the first two. (PDF p. 102.)
 [[file:lbdl-assets/page-102.png]]
 
+The universal approximation theorem [Cybenko, 1989] states that a one-hidden-layer MLP with a continuous activation function can uniformly approximate any continuous function on a compact domain when its hidden layer is sufficiently wide. (PDF p. 102.)
+
 *** 5.2 Convolutional networks
 Convolutional networks combine convolutional layers to reduce signal size before fully connected classification, or to produce a large 2D output. The LeNet image classifier combines convolution and max pooling as a feature extractor, then fully connected layers for classification; AlexNet and VGG are larger descendants.
 
@@ -462,8 +472,12 @@ Residual networks (ResNets) [He et al., 2015] use residual connections to mitiga
 #+CAPTION: Figure 5.3. Residual block with convolution, batch normalization, ReLU, and shortcut. (PDF p. 106.)
 [[file:lbdl-assets/page-106.png]]
 
+Residual networks (ResNets), introduced to address vanishing gradients, use residual connections to support networks hundreds of layers deep. They became a standard family of computer-vision architectures, available in variants with different depths; the following discussion uses ResNet-50 for classification. (PDF p. 106.)
+
 #+CAPTION: Figure 5.4. Downscaling residual block, with stride controlling spatial reduction. (PDF p. 107.)
 [[file:lbdl-assets/page-107.png]]
+
+In a downscaling residual block, the first convolution uses stride $S$ to reduce the spatial dimensions, and a strided projection on the skip path matches the changed tensor shape. ResNets build stages from these blocks, combining convolution, batch normalization, and ReLU inside residual connections. (PDF p. 107.)
 
 ResNet-50 begins with a $7\times7$ convolution and max pooling, then four residual sections. Later sections halve spatial dimensions and increase channels; average pooling converts the final $2048\times7\times7$ activation to 2048 features, followed by a fully connected classifier. (PDF pp. 108–110.)
 
@@ -485,6 +499,8 @@ The Generative Pre-trained Transformer (GPT) is a pure autoregressive model buil
 
 #+CAPTION: Figure 5.8. GPT model, using causal self-attention to predict each next token. (PDF p. 115.)
 [[file:lbdl-assets/page-115.png]]
+
+GPT, the Generative Pre-trained Transformer [Radford et al., 2018, 2019], is an autoregressive model: token embeddings and positional encodings feed repeated causal self-attention and feed-forward blocks, which produce logits for the next token at each position. (PDF p. 115.)
 
 #+CAPTION: Figure 5.9. Vision Transformer patch embedding, attention stack, and CLS-token readout. (PDF p. 117.)
 [[file:lbdl-assets/page-117.png]]
@@ -543,6 +559,8 @@ where $y_n=r_n$ at episode termination and otherwise $r_n+\gamma\max_aQ(s'_n,a;\
 #+CAPTION: Figure 6.5. DQN state-value evolution during a game of Breakout. (PDF p. 139.)
 [[file:lbdl-assets/page-139.png]]
 
+The plotted state value is $V(S_t)=\max_a Q(S_t,a)$. Its spikes correspond to clearing bricks and breaking through the top line, events that signal high future reward. DQN keeps a fixed copy $\bar{w}$ of the parameters when computing target values, so gradients do not propagate through the target; this improves the desired gradient approximation. (PDF p. 139.)
+
 ** Chapter 7: Synthesis
 Synthesis fits a density model to training samples and provides a way to sample from it. (PDF p. 141.)
 
@@ -551,6 +569,8 @@ Text generation commonly uses an autoregressive attention model such as GPT. Lar
 
 #+CAPTION: Figure 7.1. Few-shot prediction examples from a GPT model. (PDF p. 143.)
 [[file:lbdl-assets/page-143.png]]
+
+Large language models can exhibit question-answering, problem-solving, and chain-of-thought behaviors that resemble high-level reasoning. Because they integrate broad knowledge, such models are sometimes called *foundation models* [Bommasani et al., 2021], although they can still be inaccurate. (PDF p. 143.)
 
 *** 7.2 Image generation
 Diffusion models define a gradual degradation process that transforms data into a tractable noise distribution, then train a deep denoiser to reverse it. Starting from $x_0$ sampled from data, the forward process samples $x_{t+1}\sim p(x_{t+1}\mid x_t)$ until $x_T$ is approximately normal. The reverse model estimates $p(x_{t-1}\mid x_t)$; repeatedly sampling it from noise generates data-like images. For the formulation described, the reverse step is
@@ -580,6 +600,8 @@ For example, Q4_1 quantizes blocks of 32 values using a scale $d$ and bias $m$ i
 
 #+CAPTION: Figure 8.2. Perplexity of quantized Llama models versus parameter memory footprint. (PDF p. 154.)
 [[file:lbdl-assets/page-154.png]]
+
+Quantization can assign different bit widths to different weight matrices; for example, more bits may be used for attention $W^V$ weights and feed-forward weights. One llama.cpp quantization format is Q4_1. (PDF p. 154.)
 
 *** 8.3 Adapters
 Adapters add a small number of trainable parameters to a frozen pretrained model. Low-Rank Adaptation (LoRA) replaces $XW^T$ by $X(W+BA)^T$, where $W\in\mathbb{R}^{C\times D}$ is frozen, $A\in\mathbb{R}^{R\times D}$ and $B\in\mathbb{R}^{C\times R}$ are trainable, and $R\ll\min(C,D)$. Initializing $B=0$ makes the adapted model initially identical to the base model. The adapter typically requires only a few percent as many parameters as the base model and can be merged into $W$ for inference. QLoRA combines a quantized base model with unquantized low-rank adapters. (PDF pp. 156–158.)
@@ -643,6 +665,3 @@ The index spans PDF pages 179–189; its alphabetical entries and page reference
 [[file:lbdl-assets/page-188.png]]
 #+CAPTION: Index, PDF page 189.
 [[file:lbdl-assets/page-189.png]]
-
-* Page context
-Converted content covers PDF pages 1–189. Figures, bibliography, and index pages use relative links to captures in `lbdl-assets/`; `lbdl.pdf` remains unchanged.
