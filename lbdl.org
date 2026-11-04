@@ -3,6 +3,77 @@
 #+LANGUAGE: en
 #+OPTIONS: toc:2 num:t
 
+* Contents :TOC:
+- [[#the-little-book-of-deep-learning][The Little Book of Deep Learning]]
+- [[#foreword][Foreword]]
+- [[#part-i-foundations][Part I: Foundations]]
+  - [[#chapter-1-machine-learning][Chapter 1: Machine Learning]]
+    - [[#11-learning-from-data][1.1 Learning from data]]
+    - [[#12-basis-function-regression][1.2 Basis function regression]]
+    - [[#13-under-and-overfitting][1.3 Under and overfitting]]
+    - [[#14-categories-of-models][1.4 Categories of models]]
+  - [[#chapter-2-efficient-computation][Chapter 2: Efficient Computation]]
+    - [[#21-gpus-tpus-and-batches][2.1 GPUs, TPUs, and batches]]
+    - [[#22-tensors][2.2 Tensors]]
+  - [[#chapter-3-training][Chapter 3: Training]]
+    - [[#31-losses][3.1 Losses]]
+      - [[#cross-entropy][Cross-entropy]]
+      - [[#contrastive-loss][Contrastive loss]]
+      - [[#engineering-the-loss][Engineering the loss]]
+    - [[#32-autoregressive-models][3.2 Autoregressive models]]
+      - [[#causal-models][Causal models]]
+      - [[#tokenizer][Tokenizer]]
+    - [[#33-gradient-descent][3.3 Gradient descent]]
+      - [[#stochastic-gradient-descent][Stochastic Gradient Descent]]
+    - [[#34-backpropagation][3.4 Backpropagation]]
+      - [[#resource-usage][Resource usage]]
+      - [[#vanishing-gradient][Vanishing gradient]]
+    - [[#35-the-value-of-depth][3.5 The value of depth]]
+    - [[#36-training-protocols][3.6 Training protocols]]
+      - [[#fine-tuning][Fine-tuning]]
+    - [[#37-the-benefits-of-scale][3.7 The benefits of scale]]
+    - [[#38-large-scale-parallel-training][3.8 Large-Scale Parallel Training]]
+      - [[#distributed-data-parallelism][Distributed Data Parallelism]]
+      - [[#fully-sharded-data-parallelism][Fully Sharded Data Parallelism]]
+      - [[#pipeline-and-tensor-parallelism][Pipeline and tensor parallelism]]
+- [[#part-ii-deep-models][Part II: Deep Models]]
+  - [[#chapter-4-model-components][Chapter 4: Model Components]]
+    - [[#41-the-notion-of-layer][4.1 The notion of layer]]
+    - [[#42-linear-layers][4.2 Linear layers]]
+      - [[#43-activation-functions][4.3 Activation functions]]
+      - [[#44-pooling][4.4 Pooling]]
+      - [[#45-dropout][4.5 Dropout]]
+      - [[#46-normalizing-layers][4.6 Normalizing layers]]
+      - [[#47-skip-connections][4.7 Skip connections]]
+      - [[#48-attention-layers][4.8 Attention layers]]
+      - [[#multi-head-attention][Multi-head Attention]]
+      - [[#49-token-embedding][4.9 Token embedding]]
+      - [[#410-positional-encoding][4.10 Positional encoding]]
+  - [[#chapter-5-architectures][Chapter 5: Architectures]]
+    - [[#51-multi-layer-perceptrons][5.1 Multi-Layer Perceptrons]]
+    - [[#52-convolutional-networks][5.2 Convolutional networks]]
+    - [[#53-attention-models][5.3 Attention models]]
+- [[#part-iii-applications][Part III: Applications]]
+  - [[#chapter-6-prediction][Chapter 6: Prediction]]
+    - [[#61-image-denoising][6.1 Image denoising]]
+    - [[#62-image-classification][6.2 Image classification]]
+    - [[#63-object-detection][6.3 Object detection]]
+    - [[#64-semantic-segmentation][6.4 Semantic segmentation]]
+    - [[#65-speech-recognition][6.5 Speech recognition]]
+    - [[#66-text-image-representations][6.6 Text-image representations]]
+    - [[#67-reinforcement-learning][6.7 Reinforcement learning]]
+  - [[#chapter-7-synthesis][Chapter 7: Synthesis]]
+    - [[#71-text-generation][7.1 Text generation]]
+    - [[#72-image-generation][7.2 Image generation]]
+  - [[#chapter-8-the-compute-schism][Chapter 8: The Compute Schism]]
+    - [[#81-prompt-engineering][8.1 Prompt Engineering]]
+    - [[#82-quantization][8.2 Quantization]]
+    - [[#83-adapters][8.3 Adapters]]
+    - [[#84-model-merging][8.4 Model merging]]
+  - [[#the-missing-bits][The Missing Bits]]
+  - [[#bibliography][Bibliography]]
+  - [[#index][Index]]
+
 * The Little Book of Deep Learning
 François Fleuret
 
@@ -12,63 +83,6 @@ The cover illustration is a schematic of the Neocognitron by Fukushima [1980], a
 
 #+CAPTION: Neocognitron schematic from the book cover.
 [[file:lbdl-assets/cover-neocognitron.png]]
-
-* Contents
-** Foreword
-** Part I: Foundations
-*** Chapter 1: Machine Learning
-**** 1.1 Learning from data
-**** 1.2 Basis function regression
-**** 1.3 Under and overfitting
-**** 1.4 Categories of models
-*** Chapter 2: Efficient Computation
-**** 2.1 GPUs, TPUs, and batches
-**** 2.2 Tensors
-*** Chapter 3: Training
-**** 3.1 Losses
-**** 3.2 Autoregressive models
-**** 3.3 Gradient descent
-**** 3.4 Backpropagation
-**** 3.5 The value of depth
-**** 3.6 Training protocols
-**** 3.7 The benefits of scale
-**** 3.8 Large-Scale Parallel Training
-** Part II: Deep Models
-*** Chapter 4: Model Components
-**** 4.1 The notion of layer
-**** 4.2 Linear layers
-**** 4.3 Activation functions
-**** 4.4 Pooling
-**** 4.5 Dropout
-**** 4.6 Normalizing layers
-**** 4.7 Skip connections
-**** 4.8 Attention layers
-**** 4.9 Token embedding
-**** 4.10 Positional encoding
-*** Chapter 5: Architectures
-**** 5.1 Multi-Layer Perceptrons
-**** 5.2 Convolutional networks
-**** 5.3 Attention models
-** Part III: Applications
-*** Chapter 6: Prediction
-**** 6.1 Image denoising
-**** 6.2 Image classification
-**** 6.3 Object detection
-**** 6.4 Semantic segmentation
-**** 6.5 Speech recognition
-**** 6.6 Text-image representations
-**** 6.7 Reinforcement learning
-*** Chapter 7: Synthesis
-**** 7.1 Text generation
-**** 7.2 Image generation
-*** Chapter 8: The Compute Schism
-**** 8.1 Prompt Engineering
-**** 8.2 Quantization
-**** 8.3 Adapters
-**** 8.4 Model merging
-*** The Missing Bits
-*** Bibliography
-*** Index
 
 * Foreword
 The current period of progress in artificial intelligence was triggered when Krizhevsky et al. [2012] demonstrated that an artificial neural network designed twenty years earlier [LeCun et al., 1989] could outperform complex state-of-the-art image recognition methods by a huge margin, simply by being a hundred times larger and trained on a similarly scaled-up dataset.
