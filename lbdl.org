@@ -211,7 +211,13 @@ For tokens in a finite vocabulary $\{1,\ldots,K\}$, let $\emptyset$ denote an un
 [[file:lbdl-assets/page-032.png]]
 
 **** Causal models
-Computing a separate model input for every time step repeats much of the computation. Instead, a causal model predicts all logits $l_1,\ldots,l_T$ at once, with the constraint that logits for position $t$ depend only on $x_1,\ldots,x_{t-1}$. This allows the output for a full sequence to be computed in one pass and the predicted probabilities of all its tokens to be maximized. Although described for fixed length $T$, practical models such as transformers process sequences of arbitrary length.
+The training procedure just described requires a different input for each $t$, and the bulk of the computation done for $t<t'$ is repeated for $t'$. This is extremely inefficient since $T$ is often of the order of hundreds or thousands. The standard strategy is to design a model $f$ that predicts all the vectors of logits $l_1,\ldots,l_T$ at once:
+
+\begin{equation}
+f:\{1,\ldots,K\}^T\to\mathbb{R}^{T\times K}.
+\end{equation}
+
+The model is constrained so that the logits at a time step depend only on preceding inputs, allowing training-time distributions for all time steps to be computed in one pass. During sampling, the inputs and logits are still computed sequentially. (PDF pp. 32–33.)
 
 **** Tokenizer
 Natural-language tokens may range from individual symbols to entire words. A separate algorithm, a *tokenizer*, converts to and from token representations. Byte Pair Encoding (BPE) [Sennrich et al., 2015] hierarchically merges character groups to produce fragments of varied lengths and similar frequencies, assigning tokens to frequent fragments and rare individual symbols. (PDF pp. 30–34.)
@@ -266,12 +272,12 @@ This 2D illustration is simplified; real models use high-dimensional representat
 *** 3.6 Training protocols
 Training protocols must use computation and data effectively and ensure performance on new data. Since training performance can be misleading, a *training set* optimizes parameters and a disjoint *test set* evaluates the trained model. When adapting hyperparameters such as architecture, learning rate, and regularization, a separate *validation set* is used to select configurations.
 
-Training is usually decomposed into *epochs*, each passing through all training examples once. Training loss typically decreases, while validation loss may reach a minimum and then increase as overfitting begins.
+Training is usually decomposed into *epochs*, each passing through all training examples once. Training loss typically decreases, while validation loss may reach a minimum and then increase as overfitting begins. Overfitting was introduced in § 1.3 and is illustrated in Figure 3.5.
 
 #+CAPTION: Figure 3.5. Training loss decreases as optimization proceeds; rising validation loss signals overfitting. (PDF p. 49.)
 [[file:lbdl-assets/page-049.png]]
 
-Paradoxically, large models often continue improving as training progresses despite their capacity, perhaps because inductive bias becomes the main optimization driver near perfect training performance [Belkin et al., 2018]. A learning-rate schedule specifies the rate at each iteration: it is generally large initially and then reduced to avoid bouncing around minima. Training very large models may take months on thousands of GPUs and cost millions of dollars, involving manual interventions informed by loss dynamics.
+Paradoxically, although they should suffer from severe overfitting due to their capacity, large models usually continue to improve as training progresses. This may be because the model's inductive bias becomes the main driver of optimization when performance is near perfect [Belkin et al., 2018]. A learning-rate schedule specifies the rate at each iteration: it is generally large initially and then reduced to avoid bouncing around minima. Training very large models may take months on thousands of GPUs and cost millions of dollars, involving manual interventions informed by loss dynamics. (PDF pp. 49–50.)
 
 **** Fine-tuning
 An already trained model can be adapted to a *downstream task* when its learned statistical structure provides useful inductive bias or when reusing it reduces training cost. *Fine-tuning* is standard training for the new task starting from the pretrained parameters rather than random initialization. It is common in computer vision, using models pretrained on ImageNet [Deng et al., 2009], and in adapting generative pretrained language models into assistant-like systems. Chapter 8 returns to resource constraints in inference and fine-tuning. (PDF pp. 48–51.)
@@ -503,10 +509,12 @@ Object detection predicts classes and locations of objects, represented by bound
 [[file:lbdl-assets/page-126.png]]
 
 *** 6.4 Semantic segmentation
-Semantic segmentation predicts the class of every pixel. A convolutional network generates per-pixel logits; multi-scale processing captures objects of different sizes by downscaling to enlarge receptive fields and then upscaling. Skip connections or parallel multi-scale pathways preserve fine detail. Training uses cross-entropy over pixels, often initialized from an image-classification model. (PDF pp. 129–131.)
+Semantic segmentation predicts the class of every pixel. A convolutional network generates per-pixel logits; multi-scale processing captures objects of different sizes by downscaling to enlarge receptive fields and then upscaling. Skip connections or parallel multi-scale pathways preserve fine detail. (PDF pp. 129–131.)
 
 #+CAPTION: Figure 6.3. Semantic segmentation results with the Pyramid Scene Parsing Network. (PDF p. 130.)
 [[file:lbdl-assets/page-130.png]]
+
+Models that use multi-scale pathways in parallel, after a convolutional backbone, concatenate the resulting multi-scale representation after upscaling, before making the final per-pixel prediction [Zhao et al., 2016]. Training uses cross-entropy summed over all pixels. As in object detection, training can start from a network pretrained on a large-scale image-classification dataset to compensate for the limited availability of segmentation ground truth. (PDF pp. 130–131.)
 
 *** 6.5 Speech recognition
 Speech recognition converts sound into words. One approach converts audio to a spectrogram, a sequence of frequency-band energies, processes it with 1D convolutions and a Transformer encoder, then uses a decoder to generate text tokens. A shared model can handle transcription, translation, and non-speech sound detection. (PDF pp. 132–133.)
